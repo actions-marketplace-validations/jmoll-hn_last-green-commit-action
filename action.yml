@@ -1,0 +1,14 @@
+name: 'get-workflow-id-action'
+description: 'Action to find the ID of a workflow that is being run.'
+author: 'Simplicity'
+inputs:
+  token:
+    description: 'GITHUB_TOKEN or a repo scoped PAT.'
+    default: ${{ github.token }}
+    required: true
+  workflow:
+    description: 'Workflow name to look for.'
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
