@@ -1,3 +1,3 @@
-# "Get Workflow ID" action
+# "Last Green Commit" action
 
-This action returns the workflow id of a workflow that is being run.
+Obtains commit hash of a last successful workflow run.
