@@ -12,7 +12,6 @@ inputs:
     required: false
   branch:
     description: 'Branch name to look for.'
-    default: ${{ steps.extract_branch.outputs.branch }}
     required: false
 runs:
   using: 'node12'
