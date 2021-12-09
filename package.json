@@ -1,7 +1,7 @@
 {
-  "name": "get-workflow-id-action",
+  "name": "last-green-commit-action",
   "version": "1.0.0",
-  "description": "Obtains workflow ID from a run",
+  "description": "Obtains commit hash of a last successful workflow run.",
   "main": "index.js",
   "scripts": {
     "build": "ncc build src/main.ts -o dist"

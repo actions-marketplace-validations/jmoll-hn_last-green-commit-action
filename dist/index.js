@@ -8364,6 +8364,35 @@ module.exports = require("zlib");;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -8382,18 +8411,11 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(2186);
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(5438);
-;// CONCATENATED MODULE: external "child_process"
-const external_child_process_namespaceObject = require("child_process");;
-// EXTERNAL MODULE: external "util"
-var external_util_ = __nccwpck_require__(1669);
-;// CONCATENATED MODULE: ./src/main.ts
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5438);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8405,57 +8427,52 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 
 
-
-
-const execAsync = (0,external_util_.promisify)(external_child_process_namespaceObject.exec);
-let repoShas;
-/*const verifyCommit =  async (sha: string): Promise<boolean> => {
-    if (!repoShas) {
-        try {
-            const cmd = `git log --format=format:%H`;
-            core.info(`Getting list of SHAs in repo via command "${cmd}"`);
-
-            const { stdout } = await execAsync(cmd);
-
-            repoShas = stdout.trim().split('\n');
-        } catch (e) {
-            repoShas = [];
-            core.warning(`Error while attempting to get list of SHAs: ${e.message}`);
-
-            return false;
-        }
-    }
-
-    core.info(`Looking for SHA ${sha} in repo SHAs`);
-
-    return repoShas.includes(sha);
-}*/
 function run() {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const inputs = {
-                token: core.getInput("token"),
-                branch: core.getInput("branch"),
-                workflow: core.getInput("workflow"),
+                token: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("token"),
+                branch: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("branch"),
+                workflow: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("workflow"),
                 //verify: core.getInput('verify')
             };
-            const octokit = github.getOctokit(inputs.token);
+            const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(inputs.token);
             const repository = process.env.GITHUB_REPOSITORY;
             const [owner, repo] = repository.split("/");
             const workflows = yield octokit.actions.listRepoWorkflows({ owner, repo });
-            const workflowId = (_a = workflows.data.workflows.find(w => w.name === inputs.workflow)) === null || _a === void 0 ? void 0 : _a.id;
+            const workflowId = (_a = workflows.data.workflows.find((w) => w.name === inputs.workflow)) === null || _a === void 0 ? void 0 : _a.id;
             if (!workflowId) {
-                core.setFailed(`No workflow exists with the name "${inputs.workflow}"`);
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`No workflow exists with the name "${inputs.workflow}"`);
                 return;
             }
             else {
-                core.info(`Discovered workflowId for search: ${workflowId}`);
-                core.setOutput("workflow_id", workflowId);
+                const foundWorkflow = yield octokit.actions.listWorkflowRuns({
+                    owner,
+                    repo,
+                    workflow_id: workflowId,
+                    status: "success",
+                    branch: inputs.branch
+                });
+                /*.then((res) => {
+                    const lastSuccessCommitHash =
+                      res.data.workflow_runs.length > 0
+                        ? res.data.workflow_runs[0].head_commit?.id
+                        : "";
+                    core.setOutput("commit_hash", lastSuccessCommitHash);
+                  })
+                  .catch((e) => {
+                    core.setFailed(e.message);
+                  });*/
+                const lastSuccessCommitHash = foundWorkflow.data.workflow_runs.length > 0
+                    ? (_b = foundWorkflow.data.workflow_runs[0].head_commit) === null || _b === void 0 ? void 0 : _b.id
+                    : "";
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Discovered last successfull commit: ${lastSuccessCommitHash}`);
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("commit_hash", lastSuccessCommitHash);
             }
         }
-        catch (error) {
-            core.setFailed(error.message);
+        catch (e) {
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(e.message);
         }
     });
 }

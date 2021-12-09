@@ -1,5 +1,5 @@
-name: 'get-workflow-id-action'
-description: 'Action to find the ID of a workflow that is being run.'
+name: 'last-green-commit-action'
+description: 'Obtains commit hash of a last successful workflow run.'
 author: 'Simplicity'
 inputs:
   token:
@@ -8,7 +8,12 @@ inputs:
     required: true
   workflow:
     description: 'Workflow name to look for.'
-    required: true
+    default: ${{ github.workflow }}
+    required: false
+  branch:
+    description: 'Branch name to look for.'
+    default: ${{ steps.extract_branch.outputs.branch }}
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
