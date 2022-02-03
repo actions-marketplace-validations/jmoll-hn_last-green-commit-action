@@ -9,44 +9,45 @@ async function run(): Promise<void> {
       workflow: core.getInput("workflow"),
       //verify: core.getInput('verify')
     };
-
+    core.info(`Obtaining last successful commit for: `);
+    core.info(`Branch name: ${inputs.branch}`);
+    core.info(`Workflow: ${inputs.workflow}`);
     const octokit = github.getOctokit(inputs.token);
     const repository: string = process.env.GITHUB_REPOSITORY as string;
     const [owner, repo] = repository.split("/");
 
-    const workflows = await octokit.actions.listRepoWorkflows({ owner, repo });
-    const workflowId = workflows.data.workflows.find(
-      (w) => w.name === inputs.workflow
-    )?.id;
-
-    if (!workflowId) {
-      core.setFailed(`No workflow exists with the name "${inputs.workflow}"`);
-      return;
-    } else {
-      const foundWorkflow = await octokit.actions.listWorkflowRuns({
+    const itemsPerPage = 100;
+    let workflows = await octokit.rest.actions.listWorkflowRuns({
+      owner,
+      repo,
+      workflow_id: inputs.workflow,
+      branch: inputs.branch,
+      status: "success",
+      per_page: itemsPerPage,
+    });
+    const allWorkflows: typeof workflows.data.workflow_runs = [];
+    console.log(`Expected: ${workflows.data.total_count}`);
+    for (let j = 0; j < workflows.data.workflow_runs.length; j++) {
+      allWorkflows.push(workflows.data.workflow_runs[j]);
+    }
+    const numOfPages = Math.ceil(workflows.data.total_count / itemsPerPage);
+    for (let i = 0; i < numOfPages - 1; i++) {
+      workflows = await octokit.rest.actions.listWorkflowRuns({
         owner,
         repo,
-        workflow_id: workflowId,
+        workflow_id: inputs.workflow,
+        branch: inputs.branch,
         status: "success",
-        branch: inputs.branch
+        per_page: itemsPerPage,
+        page: i + 2,
       });
-      /*.then((res) => {
-          const lastSuccessCommitHash =
-            res.data.workflow_runs.length > 0
-              ? res.data.workflow_runs[0].head_commit?.id
-              : "";
-          core.setOutput("commit_hash", lastSuccessCommitHash);
-        })
-        .catch((e) => {
-          core.setFailed(e.message);
-        });*/
-      const lastSuccessCommitHash =
-        foundWorkflow.data.workflow_runs.length > 0
-          ? foundWorkflow.data.workflow_runs[0].head_commit?.id
-          : "";
-      core.info(`Discovered last successfull commit: ${lastSuccessCommitHash}`);
-      core.setOutput("commit_hash", lastSuccessCommitHash);
+      for (let j = 0; j < workflows.data.workflow_runs.length; j++) {
+        allWorkflows.push(workflows.data.workflow_runs[j]);
+      }
     }
+    const lastSuccessCommitHash = allWorkflows[0].head_commit?.id ?? "";
+    core.info(`Discovered last successfull commit: ${lastSuccessCommitHash}`);
+    core.setOutput("commit_hash", lastSuccessCommitHash);
   } catch (e) {
     core.setFailed(e.message);
   }
