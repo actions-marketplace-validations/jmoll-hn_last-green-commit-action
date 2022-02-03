@@ -26,7 +26,6 @@ async function run(): Promise<void> {
       per_page: itemsPerPage,
     });
     const allWorkflows: typeof workflows.data.workflow_runs = [];
-    console.log(`Expected: ${workflows.data.total_count}`);
     for (let j = 0; j < workflows.data.workflow_runs.length; j++) {
       allWorkflows.push(workflows.data.workflow_runs[j]);
     }
