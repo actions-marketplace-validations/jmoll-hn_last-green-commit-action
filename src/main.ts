@@ -48,7 +48,8 @@ async function run(): Promise<void> {
     core.info(`Discovered last successfull commit: ${lastSuccessCommitHash}`);
     core.setOutput("commit_hash", lastSuccessCommitHash);
   } catch (e) {
-    core.setFailed(JSON.stringify(e));
+    core.info(JSON.stringify(e));
+    core.setOutput("commit_hash", "");
   }
 }
 
