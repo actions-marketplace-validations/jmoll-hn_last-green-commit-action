@@ -1,4 +1,4 @@
-name: 'last-green-commit-action'
+name: 'last-green-sha'
 description: 'Obtains commit hash of a last successful workflow run.'
 author: 'Highnote'
 inputs:
