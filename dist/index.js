@@ -8341,15 +8341,17 @@ function run() {
         try {
             const inputs = {
                 token: core.getInput("token"),
+                repo: core.getInput("repo"),
                 branch: core.getInput("branch"),
                 workflow: core.getInput("workflow"),
                 //verify: core.getInput('verify')
             };
             core.info(`Obtaining last successful commit for: `);
+            core.info(`Repo: ${inputs.repo}`);
             core.info(`Branch name: ${inputs.branch}`);
             core.info(`Workflow: ${inputs.workflow}`);
             const octokit = github.getOctokit(inputs.token);
-            const repository = process.env.GITHUB_REPOSITORY;
+            const repository = inputs.repo;
             const [owner, repo] = repository.split("/");
             const itemsPerPage = 100;
             let workflows = yield octokit.rest.actions.listWorkflowRuns({

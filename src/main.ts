@@ -5,15 +5,17 @@ async function run(): Promise<void> {
   try {
     const inputs = {
       token: core.getInput("token"),
+      repo: core.getInput("repo"),
       branch: core.getInput("branch"),
       workflow: core.getInput("workflow"),
       //verify: core.getInput('verify')
     };
     core.info(`Obtaining last successful commit for: `);
+    core.info(`Repo: ${inputs.repo}`);
     core.info(`Branch name: ${inputs.branch}`);
     core.info(`Workflow: ${inputs.workflow}`);
     const octokit = github.getOctokit(inputs.token);
-    const repository: string = process.env.GITHUB_REPOSITORY as string;
+    const repository: string = inputs.repo;
     const [owner, repo] = repository.split("/");
 
     const itemsPerPage = 100;

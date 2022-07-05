@@ -6,6 +6,10 @@ inputs:
     description: 'GITHUB_TOKEN or a repo scoped PAT.'
     default: ${{ github.token }}
     required: true
+  repo:
+    description: 'GitHub owner and repository name. e.g. Codertocat/Hello-World'
+    default: ${{ github.repository }}
+    required: false
   workflow:
     description: 'Workflow name to look for.'
     default: ${{ github.workflow }}
