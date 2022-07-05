@@ -1,6 +1,6 @@
 name: 'last-green-commit-action'
 description: 'Obtains commit hash of a last successful workflow run.'
-author: 'Simplicity'
+author: 'Highnote'
 inputs:
   token:
     description: 'GITHUB_TOKEN or a repo scoped PAT.'
